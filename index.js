@@ -1,54 +1,59 @@
 const express = require("express");
 const axios = require("axios");
-const axiosRetry = require("axios-retry");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const BASE_URL = "https://backend1.tioo.eu.org";
-const ENDPOINT = "/aio"; // Use /aio for all requests
 
-// Configure axios retries
-axiosRetry(axios, { retries: 3, retryDelay: (retryCount) => retryCount * 1000 });
+const endpointMap = [
+  { match: /tiktok\.com/, path: "/tiktok", name: "TikTok" },
+  { match: /instagram\.com/, path: "/igdl", name: "Instagram" },
+  { match: /fb\.watch|facebook\.com/, path: "/fbdown", name: "Facebook" },
+  { match: /twitter\.com|x\.com/, path: "/twitter", name: "Twitter" },
+  { match: /youtube\.com|youtu\.be/, path: "/youtube", name: "YouTube" },
+  { match: /mediafire\.com/, path: "/mediafire", name: "Mediafire" },
+  { match: /capcut\.com/, path: "/capcut", name: "CapCut" },
+  { match: /drive\.google\.com/, path: "/gdrive", name: "Google Drive" },
+  { match: /pinterest\.com/, path: "/pinterest", name: "Pinterest" },
+];
 
 app.get("/alldl", async (req, res) => {
   const { url } = req.query;
   if (!url) return res.status(400).json({ error: "Missing url parameter" });
 
+  const matched = endpointMap.find((entry) => entry.match.test(url));
+  const endpoint = matched?.path || "/aio";
+  const sourceName = matched?.name || "Auto";
+
   try {
-    const response = await axios.get(`${BASE_URL}${ENDPOINT}`, {
+    const response = await axios.get(`${BASE_URL}${endpoint}`, {
       params: { url },
       timeout: 0,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
-        "Accept": "application/json",
-        "Referer": "https://try.tioo.eu.org",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Cache-Control": "no-cache"
-      }
     });
 
     let data = response.data || {};
 
+   
     if (Array.isArray(data)) {
       data = data.map((item) => ({
         ...item,
-        developer: "@Team-Calyx"
+        developer: "@Team-Calyx", 
       }));
     } else {
+      
       delete data.creator;
       delete data.developer;
       data.developer = "@Team-Clayx";
     }
 
     return res.json({
-      source: "Auto", // Since /aio is used, source is always "Auto"
-      data
+      source: sourceName,
+      data,
     });
   } catch (err) {
-    console.error("Error details:", err.response?.data || err.message);
     return res.status(500).json({
       error: "Failed to fetch download data.",
-      details: err.response?.data || err.message
+      details: err.response?.data || err.message,
     });
   }
 });
