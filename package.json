@@ -1,13 +1,14 @@
 {
-  "name": "AllDl-Api",
+  "name": "Alldl-Api",
   "version": "1.0.0",
-  "description": "A Node.js server for downloading media from various social media platforms",
+  "description": "A Node.js server for downloading media from various social media platforms using /aio endpoint",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "axios": "^1.7.2",
+    "axios-retry": "^4.5.0",
     "express": "^4.18.2"
   },
   "author": "MinatoCodes",
