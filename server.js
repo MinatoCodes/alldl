@@ -6,27 +6,32 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('✅ SaveFrom Downloader API is up and running!');
+  res.send('✅ SaveFrom Downloader API is running with GET method!');
 });
 
-app.post('/api/download', async (req, res) => {
-  const { url } = req.body;
+app.get('/api/download', async (req, res) => {
+  const videoUrl = req.query.url;
 
-  if (!url) return res.status(400).json({ error: 'Missing video URL.' });
+  if (!videoUrl) {
+    return res.status(400).json({ success: false, message: 'Missing url parameter' });
+  }
 
-  const links = await getDownloadLinks(url);
-
-  if (links && links.length > 0) {
-    res.json({ success: true, links });
-  } else {
-    res.status(500).json({ success: false, message: 'Could not fetch links. Try again.' });
+  try {
+    const links = await getDownloadLinks(videoUrl);
+    if (links && links.length > 0) {
+      res.json({ success: true, links });
+    } else {
+      res.status(404).json({ success: false, message: 'No download links found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server is running at http://localhost:${PORT}`);
 });
-                                       
+    
