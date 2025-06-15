@@ -2,9 +2,16 @@ const puppeteer = require('puppeteer');
 
 async function getDownloadLinks(videoUrl) {
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox']
+    headless: 'new', // important for latest Puppeteer
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-gpu',
+      '--no-zygote',
+      '--disable-dev-shm-usage'
+    ],
   });
+
 
   const page = await browser.newPage();
   try {
