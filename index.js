@@ -1,22 +1,19 @@
 const express = require("express");
-const matchDownloader = require("./downloaders");
+const getHandlerForUrl = require("./downloaders");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-
-app.get("/api/alldl", async (req, res) => {
+app.get("/api/download", async (req, res) => {
   const { url } = req.query;
+  if (!url) return res.status(400).json({ error: "Missing 'url' or Search component(If Pinterest)"});
 
-  if (!url) return res.status(400).json({ error: "Missing URL or Search component(pinterest)" });
+  const handler = getHandlerForUrl(url);
+  if (!handler) return res.status(400).json({ error: "Unsupported platform" });
 
-  const downloader = matchDownloader(url);
-  if (!downloader) return res.status(400).json({ error: "Unsupported platform" });
-
-  const result = await downloader(url);
-  res.json(result);
+  return handler(req, res);
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});
