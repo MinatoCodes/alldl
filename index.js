@@ -9,7 +9,7 @@ app.use(express.json());
 app.get("/api/alldl", async (req, res) => {
   const { url } = req.query;
 
-  if (!url) return res.status(400).json({ error: "Missing URL" });
+  if (!url) return res.status(400).json({ error: "Missing URL or Search component(pinterest)" });
 
   const downloader = matchDownloader(url);
   if (!downloader) return res.status(400).json({ error: "Unsupported platform" });
