@@ -3,7 +3,7 @@ const igdl = require("./downloaders/igdl");
 const fbdown = require("./downloaders/fbdown");
 const ytdl = require("./downloaders/ytdl");
 const tweetdl = require("./downloaders/tweetdl");
-const gdrivedl = require("./downloaders/gdrivedl");
+const gdrivedl = require("./downloaders/gdrive");
 
 module.exports = async function alldl(url) {
     if (!url) throw new Error("No URL provided");
