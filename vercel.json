@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/alldl.js", "use": "@vercel/node" },
+    { "src": "api/ttdl.js", "use": "@vercel/node" },
+    { "src": "api/igdl.js", "use": "@vercel/node" },
+    { "src": "api/fbdown.js", "use": "@vercel/node" },
+    { "src": "api/ytdl.js", "use": "@vercel/node" },
+    { "src": "api/tweetdl.js", "use": "@vercel/node" },
+    { "src": "api/gdrive.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/alldl", "dest": "api/alldl.js" },
+    { "src": "/api/ttdl", "dest": "api/ttdl.js" },
+    { "src": "/api/igdl", "dest": "api/igdl.js" },
+    { "src": "/api/fbdown", "dest": "api/fbdown.js" },
+    { "src": "/api/ytdl", "dest": "api/ytdl.js" },
+    { "src": "/api/tweetdl", "dest": "api/tweetdl.js" },
+    { "src": "/api/gdrive", "dest": "api/gdrive.js" }
+  ]
+    }
+    
