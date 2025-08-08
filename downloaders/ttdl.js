@@ -20,7 +20,7 @@ async function ttdl(url) {
         thumbnail: data.thumbnail,
         video: data.video,
         audio: data.audio,
-        creator: data.creator
+        creator: "Minato"
     };
 }
 
