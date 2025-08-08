@@ -1,19 +1,51 @@
-const express = require("express");
-const getHandlerForUrl = require("./downloaders");
+const ttdl = require("./downloaders/ttdl");
+const igdl = require("./downloaders/igdl");
+const fbdown = require("./downloaders/fbdown");
+const ytdl = require("./downloaders/ytdl");
+const tweetdl = require("./downloaders/tweetdl");
+const gdrivedl = require("./downloaders/gdrivedl");
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+module.exports = async function alldl(url) {
+    if (!url) throw new Error("No URL provided");
 
-app.get("/api/download", async (req, res) => {
-  const { url } = req.query;
-  if (!url) return res.status(400).json({ error: "Missing 'url' or Search component(If Pinterest)"});
+    const matchers = [
+        // TikTok
+        { regex: /tiktok\.com/i, handler: ttdl },
 
-  const handler = getHandlerForUrl(url);
-  if (!handler) return res.status(400).json({ error: "Unsupported platform" });
+        // Instagram (reel, post, story)
+        { regex: /instagram\.com/i, handler: igdl },
 
-  return handler(req, res);
-});
+        // Facebook (fb.watch, m.facebook.com, www.facebook.com)
+        { regex: /(?:facebook\.com|fb\.watch)/i, handler: fbdown },
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-});
+        // YouTube (shorts, normal watch links)
+        { regex: /(?:youtube\.com|youtu\.be)/i, handler: ytdl },
+
+        // Twitter / X
+        { regex: /(?:twitter\.com|x\.com)/i, handler: tweetdl },
+
+        // Google Drive
+        { regex: /drive\.google\.com/i, handler: gdrivedl }
+    ];
+
+    for (const { regex, handler } of matchers) {
+        if (regex.test(url)) {
+            return await handler(url);
+        }
+    }
+
+    throw new Error("No suitable downloader found for this URL");
+};
+
+// Local test
+if (require.main === module) {
+    (async () => {
+        try {
+            const result = await module.exports("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            console.log(result);
+        } catch (err) {
+            console.error(err.message);
+        }
+    })();
+         }
+         
