@@ -1,4 +1,4 @@
-const alldl = require("./index");
+const alldl = require("../index");
 
 module.exports = async (req, res) => {
     try {
