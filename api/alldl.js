@@ -1,23 +1,24 @@
-const matchers = [
-    { pattern: /tiktok\.com/i, script: require("../downloaders/ttdl") },
-    { pattern: /instagram\.com/i, script: require("../downloaders/igdl") },
-    { pattern: /facebook\.com|fb\.watch/i, script: require("../downloaders/fbdown") },
-    { pattern: /youtube\.com|youtu\.be/i, script: require("../downloaders/ytdl") },
-    { pattern: /twitter\.com|x\.com/i, script: require("../downloaders/tweetdl") },
-    { pattern: /drive\.google\.com/i, script: require("../downloaders/gdrive") }
-];
+const url = require('url');
+const ttdl = require('../downloaders/ttdl');
+const tweetdl = require('../downloaders/tweetdl');
+const gdrive = require('../downloaders/gdrive');
+const ytdl = require('../downloaders/ytdl');
+const igdl = require('../downloaders/igdl');
+const fbdown = require('../downloaders/fbdown');
 
 module.exports = async (req, res) => {
-    try {
-        const { url } = req.query;
-        if (!url) return res.status(400).json({ error: "Missing url parameter" });
+  const query = url.parse(req.url, true).query;
+  const targetUrl = query.url;
+  if (!targetUrl) return res.status(400).json({ success: false, error: "No URL provided" });
 
-        const match = matchers.find(m => m.pattern.test(url));
-        if (!match) return res.status(400).json({ error: "Unsupported URL" });
+  let result;
+  if (/tiktok\.com/.test(targetUrl)) result = await ttdl(targetUrl);
+  else if (/twitter\.com/.test(targetUrl)) result = await tweetdl(targetUrl);
+  else if (/drive\.google\.com/.test(targetUrl)) result = await gdrive(targetUrl);
+  else if (/youtube\.com|youtu\.be/.test(targetUrl)) result = await ytdl(targetUrl);
+  else if (/instagram\.com/.test(targetUrl)) result = await igdl(targetUrl);
+  else if (/facebook\.com|fb\.watch/.test(targetUrl)) result = await fbdown(targetUrl);
+  else return res.status(400).json({ success: false, error: "Unsupported platform" });
 
-        const data = await match.script(url);
-        res.status(200).json({ success: true, data });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message || err });
-    }
+  res.json(result);
 };
