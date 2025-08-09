@@ -1,28 +1,16 @@
-const axios = require("axios");
+const axios = require('axios');
 
-/**
- * TikTok Downloader
- * @param {string} url TikTok video URL
- * @returns {Promise<object>} Download info
- */
-async function ttdl(url) {
-    if (!url) throw new Error("No URL provided");
-    if (!/tiktok\.com/.test(url)) throw new Error("Invalid TikTok URL");
-
-    const apiUrl = `https://backend1.tioo.eu.org/ttdl?url=${encodeURIComponent(url)}`;
-    const { data } = await axios.get(apiUrl);
-
-    return {
-        status: true,
-        platform: "TikTok",
-        title: data.title,
-        title_audio: data.title_audio,
-        thumbnail: data.thumbnail,
-        video: data.video,
-        audio: data.audio,
-        creator: "Minato"
-    };
-}
-
-module.exports = ttdl;
-      
+module.exports = async function ttdl(url) {
+    try {
+        const res = await axios.get('https://backend1.tioo.eu.org/ttdl', {
+            params: { url },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
+    } catch (err) {
+        throw err.response ? err.response.data : err;
+    }
+};

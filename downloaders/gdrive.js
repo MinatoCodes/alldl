@@ -1,22 +1,16 @@
-// downloader/gdrivedl.js
-const axios = require("axios");
+const axios = require('axios');
 
-module.exports = async function gdrivedl(url) {
-    if (!url) throw new Error("You must provide a Google Drive file link");
-
+module.exports = async function gdrive(url) {
     try {
-        const apiUrl = `https://backend1.tioo.eu.org/gdrive?url=${encodeURIComponent(url)}`;
-        const { data } = await axios.get(apiUrl);
-
-        if (!data.status) throw new Error("Google Drive API returned an error");
-
-        return {
-            Creator: "Minato",
-            filename: data.data.filename,
-            filesize: data.data.filesize,
-            download: data.data.downloadUrl
-        };
+        const res = await axios.get('https://backend1.tioo.eu.org/gdrive', {
+            params: { url },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
     } catch (err) {
-        throw new Error(`Google Drive download failed: ${err.message}`);
+        throw err.response ? err.response.data : err;
     }
 };

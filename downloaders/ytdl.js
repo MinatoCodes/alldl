@@ -1,26 +1,16 @@
-const axios = require("axios");
+const axios = require('axios');
 
 module.exports = async function ytdl(url) {
-    if (!url) throw new Error("You must provide a YouTube video URL");
-
     try {
-        const apiUrl = `https://backend1.tioo.eu.org/youtube?url=${encodeURIComponent(url)}`;
-        const { data } = await axios.get(apiUrl);
-
-        if (!data) throw new Error("Invalid response from YouTube API");
-
-        // Prefer MP4, fallback to MP3
-        const downloadUrl = data.mp4;
-        if (!downloadUrl) throw new Error("No downloadable media found");
-
-        return {
-            title: data.title || "Untitled",
-            thumbnail: data.thumbnail || null,
-            author: "Minato" || null,
-            url: downloadUrl
-        };
+        const res = await axios.get('https://backend1.tioo.eu.org/ytdl', {
+            params: { url },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
     } catch (err) {
-        throw new Error(`YouTube download failed: ${err.message}`);
+        throw err.response ? err.response.data : err;
     }
 };
-                                                                   

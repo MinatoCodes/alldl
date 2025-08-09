@@ -1,28 +1,16 @@
-const axios = require("axios");
+const axios = require('axios');
 
-/**
- * Facebook Video Downloader
- * @param {string} url Facebook video URL
- * @returns {Promise<object>} HD video download info
- */
-async function fbdown(url) {
-    if (!url) throw new Error("No URL provided");
-    if (!/facebook\.com/.test(url)) throw new Error("Invalid Facebook URL");
-
-    const apiUrl = `https://backend1.tioo.eu.org/fbdown?url=${encodeURIComponent(url)}`;
-    const { data } = await axios.get(apiUrl);
-
-    if (!data || !data.HD) {
-        throw new Error("No HD video found");
+module.exports = async function fbdown(url) {
+    try {
+        const res = await axios.get('https://backend1.tioo.eu.org/fbdown', {
+            params: { url },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
+    } catch (err) {
+        throw err.response ? err.response.data : err;
     }
-
-    return {
-        status: true,
-        platform: "Facebook",
-        developer: "Minato",
-        hd: data.HD
-    };
-}
-
-module.exports = fbdown;
-      
+};

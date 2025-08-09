@@ -1,29 +1,16 @@
-const axios = require("axios");
+const axios = require('axios');
 
-/**
- * Instagram Downloader
- * @param {string} url Instagram post/reel URL
- * @returns {Promise<object>} Download info
- */
-async function igdl(url) {
-    if (!url) throw new Error("No URL provided");
-    if (!/instagram\.com/.test(url)) throw new Error("Invalid Instagram URL");
-
-    const apiUrl = `https://backend1.tioo.eu.org/igdl?url=${encodeURIComponent(url)}`;
-    const { data } = await axios.get(apiUrl);
-
-    if (!Array.isArray(data) || data.length === 0) {
-        throw new Error("No media found");
+module.exports = async function igdl(url) {
+    try {
+        const res = await axios.get('https://backend1.tioo.eu.org/igdl', {
+            params: { url },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+                'Accept': 'application/json'
+            }
+        });
+        return res.data;
+    } catch (err) {
+        throw err.response ? err.response.data : err;
     }
-
-    return {
-        status: true,
-        platform: "Instagram",
-        creator: "Minato",
-        thumbnail: data[0].thumbnail,
-        url: data[0].url
-    };
-}
-
-module.exports = igdl;
-      
+};
