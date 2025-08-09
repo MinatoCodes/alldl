@@ -1,16 +1,14 @@
 const axios = require('axios');
 
-module.exports = async function tweetdl(url) {
-    try {
-        const res = await axios.get('https://backend1.tioo.eu.org/twitter', {
-            params: { url },
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
-                'Accept': 'application/json'
-            }
-        });
-        return res.data;
-    } catch (err) {
-        throw err.response ? err.response.data : err;
+module.exports = async (url) => {
+    const apiUrl = `https://backend1.tioo.eu.org/twitter?url=${encodeURIComponent(url)}`;
+    const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const data = res.data;
+    data.creator = "Minato";
+
+    if (!data.url[0].hd && data.url[0].sd) {
+        data.url[0].hd = data.url[0].sd;
     }
+
+    return data;
 };
