@@ -1,22 +1,13 @@
 const axios = require('axios');
 
-module.exports = async function(url) {
-  try {
-    
+module.exports = async (url) => {
     const apiUrl = `https://backend1.tioo.eu.org/gdrive?url=${encodeURIComponent(url)}`;
-    const res = await axios.get(apiUrl);
-    const data = res.data.data;
+    const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const data = res.data;
     return {
-      success: true,
-      creator: "Minato",
-      platform: "gdrive",
-      download_url: data.downloadUrl
+        success: true,
+        creator: "MinatoCodes",
+        platform: "gdrive",
+        download_url: data.data.downloadUrl || null
     };
-    
-  } catch (err) {
-    return {
-      success: false,
-      error: err.message
-    };
-  }
-}
+};
