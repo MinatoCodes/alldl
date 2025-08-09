@@ -1,9 +1,22 @@
 const axios = require('axios');
 
-module.exports = async (videoUrl) => {
-    const apiUrl = `https://backend1.tioo.eu.org/ttdl?url=${encodeURIComponent(videoUrl)}`;
-    const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+module.exports = async function(url) {
+  try {
+    
+    const apiUrl = `https://backend1.tioo.eu.org/ttdl?url=${encodeURIComponent(url)}`;
+    const res = await axios.get(apiUrl);
     const data = res.data;
-    data.data.creator = "Minato";
-    return data;
-};
+    return {
+      success: true,
+      creator: "Minato",
+      platform: "ttdl",
+      download_url: data.video?.[0] || data.audio?.[0] || null
+    };
+    
+  } catch (err) {
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
