@@ -8,6 +8,6 @@ module.exports = async (url) => {
         success: true,
         creator: "MinatoCodes",
         platform: "tweetdl",
-        download_url: data.url[0].hd || data.url[0].sd || null
+        download_url: data.url.hd || data.url.sd || null
     };
 };

@@ -8,6 +8,6 @@ module.exports = async (url) => {
         success: true,
         creator: "MinatoCodes",
         platform: "fbdown",
-        download_url: data.url[0] || null
+        download_url: data.url || null
     };
 };

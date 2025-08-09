@@ -8,6 +8,6 @@ module.exports = async (url) => {
         success: true,
         creator: "MinatoCodes",
         platform: "igdl",
-        download_url: data.url[0] || null
+        download_url: data.url || null
     };
 };

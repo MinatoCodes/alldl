@@ -8,6 +8,6 @@ module.exports = async (url) => {
         success: true,
         creator: "MinatoCodes",
         platform: "ttdl",
-        download_url: data.video[0] || null
+        download_url: data.video|| null
     };
 };
